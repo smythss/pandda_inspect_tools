@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # plugin for COOT to inspect and model pandda.analyse results
 # Python 3 / GTK3 / Coot 0.9.x (CCP4 7.1) compatible version
 #
@@ -21,7 +22,29 @@ try:
 except ImportError:
     import gtk as Gtk          # GTK2 fallback (shouldn't be needed with CCP4 7.1)
 
+# Orientation constants -- some Coot/CCP4 environments ship gi bindings where
+# Gtk.Orientation exists as a type but its named members are not populated.
+# Fall back to the underlying integer values (0=HORIZONTAL, 1=VERTICAL).
+try:
+    _HORIZ = Gtk.Orientation.HORIZONTAL
+    _VERT  = Gtk.Orientation.VERTICAL
+except AttributeError:
+    _HORIZ, _VERT = 0, 1
+
 import coot
+import sys as _sys
+
+# Python 2/3 compatibility helpers for csv file open
+if _sys.version_info[0] >= 3:
+    def _csv_open_r(path):
+        return open(path, newline='')
+    def _csv_open_w(path):
+        return open(path, 'w', newline='')
+else:
+    def _csv_open_r(path):
+        return open(path, 'rb')
+    def _csv_open_w(path):
+        return open(path, 'wb')
 
 
 # ---------------------------------------------------------------------------
@@ -293,7 +316,7 @@ class inspect_gui(object):
     def save_pandda_inspect_events_csv_file(self):
         path = os.path.join(self.analysis_folder, 'pandda_inspect_events.csv')
         self.logger.info('updating {0!s}'.format(path))
-        with open(path, 'w', newline='') as f:
+        with _csv_open_w(path) as f:
             csv.writer(f).writerows(self.elist)
 
     # ------------------------------------------------------------------
@@ -386,7 +409,7 @@ class inspect_gui(object):
 
     def initialize_inspect_events_csv_file(self, analyse_csv):
         self.make_secure_copy_of_original_csv(analyse_csv)
-        with open(analyse_csv, newline='') as f:
+        with _csv_open_r(analyse_csv) as f:
             rows = list(csv.reader(f))
         for i, row in enumerate(rows):
             if i == 0:
@@ -395,12 +418,12 @@ class inspect_gui(object):
             else:
                 rows[i].extend(['False', 'False', 'Low', 'None', 'False'])
         out = os.path.join(self.analysis_folder, 'pandda_inspect_events.csv')
-        with open(out, 'w', newline='') as f:
+        with _csv_open_w(out) as f:
             csv.writer(f).writerows(rows)
 
     def initialize_inspect_sites_csv_file(self, analyse_csv):
         self.make_secure_copy_of_original_csv(analyse_csv)
-        with open(analyse_csv, newline='') as f:
+        with _csv_open_r(analyse_csv) as f:
             rows = list(csv.reader(f))
         for i, row in enumerate(rows):
             if i == 0:
@@ -408,16 +431,16 @@ class inspect_gui(object):
             else:
                 rows[i].extend(['None', 'None'])
         out = os.path.join(self.analysis_folder, 'pandda_inspect_sites.csv')
-        with open(out, 'w', newline='') as f:
+        with _csv_open_w(out) as f:
             csv.writer(f).writerows(rows)
 
     def parsepanddaDir(self):
         self.logger.info("reading {0!s}".format(self.eventCSV))
-        with open(self.eventCSV, newline='') as f:
+        with _csv_open_r(self.eventCSV) as f:
             self.elist = list(csv.reader(f))
 
         self.logger.info("reading {0!s}".format(self.siteCSV))
-        with open(self.siteCSV, newline='') as f:
+        with _csv_open_r(self.siteCSV) as f:
             self.slist = list(csv.reader(f))
 
         for n, item in enumerate(self.elist[0]):
