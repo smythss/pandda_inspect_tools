@@ -165,11 +165,11 @@ class inspect_gui(object):
         self.window.set_default_size(400, 680)
         self.window.set_title("pandda inspect")
 
-        self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        self.vbox = Gtk.Box(orientation=_VERT, spacing=4)
 
         # ---- PanDDA folder ----
         frame = Gtk.Frame(label='PanDDA folder')
-        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        hbox = Gtk.Box(orientation=_HORIZ, spacing=4)
         btn = Gtk.Button(label="Select pandda directory")
         btn.connect("clicked", self.select_pandda_folder)
         hbox.pack_start(btn, True, True, 0)
@@ -178,7 +178,7 @@ class inspect_gui(object):
 
         # ---- Event selection ----
         frame = Gtk.Frame(label='Event selection')
-        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        hbox = Gtk.Box(orientation=_HORIZ, spacing=4)
         self.select_events_combobox = Gtk.ComboBoxText()
         for c in self.selection_criteria:
             self.select_events_combobox.append_text(c)
@@ -223,9 +223,9 @@ class inspect_gui(object):
 
         # ---- Navigator ----
         frame = Gtk.Frame(label='Navigator')
-        nav_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        nav_vbox = Gtk.Box(orientation=_VERT, spacing=4)
 
-        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        hbox = Gtk.Box(orientation=_HORIZ, spacing=4)
         for label, cb in [("<<< Event", self.previous_event),
                           ("Event >>>", self.next_event)]:
             b = Gtk.Button(label=label)
@@ -233,7 +233,7 @@ class inspect_gui(object):
             hbox.pack_start(b, True, True, 0)
         nav_vbox.pack_start(hbox, False, False, 0)
 
-        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        hbox = Gtk.Box(orientation=_HORIZ, spacing=4)
         for label, cb in [("<<< Site", self.previous_site),
                           ("Site >>>", self.next_site)]:
             b = Gtk.Button(label=label)
@@ -253,7 +253,7 @@ class inspect_gui(object):
 
         # ---- Toggle maps ----
         frame = Gtk.Frame(label='Toggle Maps')
-        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        hbox = Gtk.Box(orientation=_HORIZ, spacing=4)
         for label, cb in [("event map",    self.toggle_emap),
                           ("Z-map",        self.toggle_zmap),
                           ("(2)fofc maps", self.toggle_x_ray_maps)]:
@@ -268,7 +268,7 @@ class inspect_gui(object):
 
         # ---- Ligand modelling ----
         frame = Gtk.Frame(label='Ligand Modeling')
-        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        hbox = Gtk.Box(orientation=_HORIZ, spacing=4)
         for label, cb in [("Place Ligand here",  self.place_ligand_here),
                           ("Merge Ligand",        self.merge_ligand_into_protein),
                           ("Revert to unfitted",  self.reset_to_unfitted)]:
@@ -280,7 +280,7 @@ class inspect_gui(object):
 
         # ---- Annotation radio buttons ----
         frame = Gtk.Frame(label='Annotation')
-        ann_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        ann_vbox = Gtk.Box(orientation=_VERT, spacing=2)
         self.ligand_confidence_button_list = []
         first_radio = None
         for item in self.ligand_confidence_button_labels:
@@ -299,7 +299,7 @@ class inspect_gui(object):
 
         # ---- Save ----
         frame = Gtk.Frame(label='Save')
-        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        hbox = Gtk.Box(orientation=_HORIZ, spacing=4)
         self.save_next_button = Gtk.Button(label="Save Model")
         self.save_next_button.connect("clicked", self.save_next)
         hbox.pack_start(self.save_next_button, True, True, 0)
