@@ -19,84 +19,17 @@ try:
     import gi
     gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk
-    _GTK2 = False
-except (ImportError, ValueError):
-    import gtk as Gtk
-    _GTK2 = True
+except ImportError:
+    import gtk as Gtk          # GTK2 fallback (shouldn't be needed with CCP4 7.1)
 
-
-# ---------------------------------------------------------------------------
-# GTK2 / GTK3 widget factory helpers
-# ---------------------------------------------------------------------------
-
-def _VBox(spacing=0):
-    if _GTK2:
-        return Gtk.VBox(False, spacing)
-    return Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=spacing)
-
-
-def _HBox(spacing=0):
-    if _GTK2:
-        return Gtk.HBox(False, spacing)
-    return Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=spacing)
-
-
-def _Label(text=''):
-    if _GTK2:
-        return Gtk.Label(str(text))
-    return Gtk.Label(label=text)
-
-
-def _ComboBoxText():
-    if _GTK2:
-        return Gtk.combo_box_new_text()
-    return Gtk.ComboBoxText()
-
-
-def _make_info_grid(nrows, ncols):
-    if _GTK2:
-        t = Gtk.Table(nrows, ncols, False)
-        t.set_row_spacings(2)
-        t.set_col_spacings(2)
-        return t
-    g = Gtk.Grid()
-    g.set_row_homogeneous(False)
-    g.set_column_homogeneous(True)
-    g.set_row_spacing(2)
-    g.set_column_spacing(2)
-    return g
-
-
-def _grid_attach(container, widget, col, row):
-    if _GTK2:
-        container.attach(widget, col, col + 1, row, row + 1)
-    else:
-        container.attach(widget, col, row, 1, 1)
-
-
-def _RadioButton(label, group_widget=None):
-    if _GTK2:
-        return Gtk.RadioButton(group_widget, label)
-    if group_widget is None:
-        return Gtk.RadioButton(label=label)
-    return Gtk.RadioButton.new_with_label_from_widget(group_widget, label)
-
-
-def _CheckButton(label=''):
-    if _GTK2:
-        return Gtk.CheckButton(label)
-    return Gtk.CheckButton(label=label)
-
-
-if _GTK2:
-    _FOLDER_ACTION = Gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER
-    _RESP_CANCEL   = Gtk.RESPONSE_CANCEL
-    _RESP_OK       = Gtk.RESPONSE_OK
-else:
-    _FOLDER_ACTION = Gtk.FileChooserAction.SELECT_FOLDER
-    _RESP_CANCEL   = Gtk.ResponseType.CANCEL
-    _RESP_OK       = Gtk.ResponseType.OK
-
+# Orientation constants -- some Coot/CCP4 environments ship gi bindings where
+# Gtk.Orientation exists as a type but its named members are not populated.
+# Fall back to the underlying integer values (0=HORIZONTAL, 1=VERTICAL).
+try:
+    _HORIZ = Gtk.Orientation.HORIZONTAL
+    _VERT  = Gtk.Orientation.VERTICAL
+except AttributeError:
+    _HORIZ, _VERT = 0, 1
 
 import coot
 import sys as _sys
